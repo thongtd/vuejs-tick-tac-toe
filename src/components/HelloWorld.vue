@@ -24,8 +24,8 @@ export default {
   },
   data: function() {
     return {
-      m: 20,
-      n: 20,
+      m: 10,
+      n: 10,
       boards: [],
       turn: 0,
       isEndGame: false,
@@ -85,54 +85,115 @@ export default {
         source = this.oArray;
       }
 
-      var sortArr = source.sort(function(a, b) {
+      var isWinner = this.checkWinnerByRow(source);
+      if (isWinner) {
+        return true;
+      }
+
+      isWinner = this.checkWinnerByCol(source);
+      if (isWinner) {
+        return true;
+      }
+
+      isWinner = this.checkWinnerByDiagonalLine(source);
+      return isWinner;
+    },
+    checkWinnerByRow: function(source) {
+      var count = 0;
+      var rowGroups = source.reduce((groups, item) => {
+        const group = groups[item.row] || [];
+        group.push(item);
+        groups[item.row] = group;
+        return groups;
+      }, {});
+
+      for (let t = 0; t < Object.values(rowGroups).length; t++) {
+        const gr = Object.values(rowGroups)[t];
+        let sortArr = gr.sort(function(a, b) {
+          return a.col - b.col;
+        });
+
+        for (let i = 0; i < sortArr.length - 1; i++) {
+          if (parseInt(sortArr[i].col) + 1 == parseInt(sortArr[i + 1].col)) {
+            count++;
+          } else {
+            count = 0;
+          }
+        }
+
+        if (count >= 4) {
+          return true;
+        } else {
+          count = 0;
+        }
+      }
+
+      return count >= 4;
+    },
+    checkWinnerByCol: function(source) {
+      var count = 0;
+      var colGroups = source.reduce((groups, item) => {
+        const group = groups[item.col] || [];
+        group.push(item);
+        groups[item.col] = group;
+        return groups;
+      }, {});
+
+      for (let t = 0; t < Object.values(colGroups).length; t++) {
+        const gr = Object.values(colGroups)[t];
+        let sortArr = gr.sort(function(a, b) {
+          return a.row - b.row;
+        });
+
+        for (let i = 0; i < sortArr.length - 1; i++) {
+          if (parseInt(sortArr[i].row) + 1 == parseInt(sortArr[i + 1].row)) {
+            count++;
+          } else {
+            count = 0;
+          }
+        }
+
+        if (count >= 4) {
+          return true;
+        } else {
+          count = 0;
+        }
+      }
+
+      return count >= 4;
+    },
+    checkWinnerByDiagonalLine: function(source) {
+      var count = 0;
+      let sortArr = source.sort(function(a, b) {
         return a.row - b.row;
       });
 
-      var count = 0;
-
-      // Check by rows
-      for (let i = 0; i < sortArr.length - 1; i++) {
-        if (
-          sortArr[i].row == sortArr[i + 1].row &&
-          parseInt(sortArr[i].col) + 1 == parseInt(sortArr[i + 1].col)
-        ) {
-          count++;
-        } else {
-          count = 0;
-        }
-      }
-
-      if (count >= 4) {
-        return true;
-      } else {
-        count = 0;
-      }
-
-      // Check by cols
-      for (let j = 0; j < sortArr.length - 1; j++) {
-        if (
-          sortArr[j].row == sortArr[j + 1].row &&
-          parseInt(sortArr[j].col) + 1 == parseInt(sortArr[j + 1].col)
-        ) {
-          count++;
-        } else {
-          count = 0;
-        }
-      }
-
-      if (count >= 4) {
-        return true;
-      } else {
-        count = 0;
-      }
-
-      // Case in diagonal
       for (let t = 0; t < sortArr.length - 1; t++) {
-        if (parseInt(sortArr[t].row) + 1 == parseInt(sortArr[t + 1].row)) {
-          count++;
-        } else if (parseInt(sortArr[t].row) == parseInt(sortArr[t + 1].row)) {
+        if (parseInt(sortArr[t].row) == parseInt(sortArr[t + 1].row)) {
           // Do nothing
+        } else if (
+          parseInt(sortArr[t].col) + 1 ==
+          parseInt(sortArr[t + 1].col)
+        ) {
+          count++;
+        } else {
+          count = 0;
+        }
+      }
+
+      if (count >= 4) {
+        return true;
+      }
+
+      count = 0;
+      for (let t = 0; t < sortArr.length - 1; t++) {
+        if (parseInt(sortArr[t].row) == parseInt(sortArr[t + 1].row)) {
+          // Do nothing
+        } else if (
+          parseInt(sortArr[t].col) ==
+          parseInt(sortArr[t + 1].col) + 1
+        ) {
+          count++;
         } else {
           count = 0;
         }
