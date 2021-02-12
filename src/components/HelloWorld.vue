@@ -1,6 +1,20 @@
 <template>
   <div class="hello">
-    {{ this.turn }}
+    <h1>Tic Tac Toe</h1>
+    <ul class="turn-info">
+      <li>
+        <span class="arrow" :class="turn % 2 == 0 ? 'active' : ''"
+          >&#8594;</span
+        >
+        <img src="../assets/x-icon.svg" /> turn
+      </li>
+      <li>
+        <span class="arrow" :class="turn % 2 != 0 ? 'active' : ''"
+          >&#8594;</span
+        >
+        <img src="../assets/o-icon.svg" /> turn
+      </li>
+    </ul>
     <table class="board" cellspacing="0" cellpadding="0">
       <tr v-for="(row, rowIndex) in boards" :key="rowIndex">
         <td
@@ -9,7 +23,14 @@
           v-on:click="placeOrder(rowIndex, colIndex)"
           :class="boards[rowIndex][colIndex] == 'x' ? 'red' : 'green'"
         >
-          {{ boards[rowIndex][colIndex] }}
+          <img
+            v-if="boards[rowIndex][colIndex] == 'x'"
+            src="../assets/x-icon.svg"
+          />
+          <img
+            v-if="boards[rowIndex][colIndex] == 'o'"
+            src="../assets/o-icon.svg"
+          />
         </td>
       </tr>
     </table>
@@ -218,15 +239,20 @@ export default {
 }
 .board tr td {
   padding: 3px;
-  border: 1px solid #ccc;
-  width: 30px;
-  height: 30px;
+  border: 3px solid #fff;
+  width: 40px;
+  height: 40px;
+  background: #66b3e9;
+  box-shadow: 2px 1px 3px #ccc;
 }
 .board tr td:hover {
   cursor: pointer;
-  background: #ccc;
+  background: #519ace;
 }
-
+.board tr td img {
+  width: 30px;
+  height: 30px;
+}
 .red {
   color: red;
   font-weight: bold;
@@ -235,5 +261,35 @@ export default {
 .green {
   color: green;
   font-weight: bold;
+}
+.turn-info {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+.turn-info li {
+  list-style: none;
+  display: inline-block;
+  vertical-align: middle;
+  font-weight: bold;
+}
+.turn-info li:first-child {
+  margin-right: 15px;
+}
+.turn-info li img {
+  width: 20px;
+  height: 20px;
+  font-weight: bold;
+  margin-bottom: -5px;
+}
+
+.turn-info li span.arrow {
+  color: transparent;
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.turn-info li span.arrow.active {
+  color: chocolate;
 }
 </style>
